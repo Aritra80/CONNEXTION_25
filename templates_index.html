@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Crowd Monitoring Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkS3lxeus2IjC1K6Cq3FdUM8mZqeZ4aVYB9C6A++Y9bFjFZ+Oz12C2uKw=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #020617;
+      color: #f9fafb;
+    }
+    .page {
+      display: flex;
+      min-height: 100vh;
+    }
+    .sidebar {
+      width: 240px;
+      background: #020617;
+      border-right: 1px solid #1f2937;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .brand-logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #22c55e, #0ea5e9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 20px;
+      color: #020617;
+    }
+    .brand-text h1 {
+      font-size: 16px;
+      margin: 0;
+    }
+    .brand-text span {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+    .nav-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      color: #6b7280;
+      letter-spacing: 0.14em;
+      margin-bottom: 6px;
+      margin-top: 10px;
+    }
+    .nav-item {
+      font-size: 13px;
+      padding: 7px 8px;
+      border-radius: 10px;
+      color: #9ca3af;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .nav-item i {
+      width: 14px;
+      text-align: center;
+    }
+    .nav-item.active {
+      background: rgba(34, 197, 94, 0.12);
+      color: #e5e7eb;
+      border: 1px solid rgba(34, 197, 94, 0.4);
+    }
+    .main {
+      flex: 1;
+      padding: 16px 20px 20px;
+    }
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 14px;
+    }
+    .top h2 {
+      margin: 0;
+      font-size: 20px;
+    }
+    .top span {
+      font-size: 12px;
+      color: #9ca3af;
+    }
+    .btn {
+      font-size: 12px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid #4b5563;
+      background: #020617;
+      color: #e5e7eb;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-primary {
+      border-color: #22c55e;
+      background: linear-gradient(90deg, #22c55e, #16a34a);
+      color: #020617;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1.7fr 1.3fr;
+      gap: 14px;
+    }
+    .card {
+      background: radial-gradient(circle at top left, rgba(51, 65, 85, 0.5), #020617);
+      border-radius: 14px;
+      border: 1px solid #1f2937;
+      padding: 12px 12px 14px;
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .card-header h3 {
+      margin: 0;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .card-header span {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+    .chip {
+      font-size: 10px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      border: 1px solid #4b5563;
+      color: #9ca3af;
+    }
+    .chip-live {
+      border-color: #22c55e;
+      color: #bbf7d0;
+      background: rgba(21, 128, 61, 0.14);
+    }
+    .video-container {
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #1d4ed8;
+      background: #020617;
+      min-height: 260px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .video-container img {
+      width: 100%;
+      display: block;
+      object-fit: cover;
+    }
+    .metrics {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 4px;
+    }
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+    }
+    .metric-label {
+      color: #9ca3af;
+    }
+    .metric-value {
+      font-weight: 600;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 7px;
+      border-radius: 999px;
+      background: #020617;
+      border: 1px solid #1d4ed8;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #22c55e, #facc15, #ef4444);
+      width: 0%;
+    }
+    .events {
+      margin-top: 6px;
+      max-height: 180px;
+      overflow-y: auto;
+    }
+    .event {
+      font-size: 11px;
+      padding: 6px 8px;
+      border-radius: 10px;
+      border: 1px solid #1f2937;
+      background: rgba(15, 23, 42, 0.9);
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .event span.meta {
+      font-size: 10px;
+      color: #9ca3af;
+    }
+    .event-tag {
+      font-size: 9px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid #4b5563;
+      align-self: center;
+    }
+    .event-tag.critical {
+      border-color: #ef4444;
+      color: #fecaca;
+    }
+    @media (max-width: 900px) {
+      .page {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <aside class="sidebar">
+      <div>
+        <div class="brand">
+          <div class="brand-logo">T</div>
+          <div class="brand-text">
+            <h1>Crowd Monitor</h1>
+            <span>Real-time density tracking</span>
+          </div>
+        </div>
+        <div class="nav-title">Menu</div>
+        <div class="nav-item active">
+          <i class="fa-solid fa-gauge-high"></i>
+          <span>Live Dashboard</span>
+        </div>
+        <div class="nav-item">
+          <i class="fa-solid fa-video"></i>
+          <span>Cameras</span>
+        </div>
+        <div class="nav-item">
+          <i class="fa-solid fa-bell"></i>
+          <span>Alerts</span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="top">
+        <div>
+          <h2>Real-time Crowd Monitoring</h2>
+          <span>Webcam/IP camera feed processed on the server; live count &amp; density shown here.</span>
+        </div>
+        <div>
+          <button class="btn">
+            <i class="fa-solid fa-code"></i>
+            <span>API: /api/metrics</span>
+          </button>
+          <button class="btn btn-primary">
+            <i class="fa-solid fa-plug"></i>
+            <span>Connect YOLOv8 later</span>
+          </button>
+        </div>
+      </div>
+
+      <section class="grid">
+        <!-- Left: live video -->
+        <article class="card">
+          <div class="card-header">
+            <div>
+              <h3>
+                <i class="fa-solid fa-video"></i>
+                Live camera feed
+              </h3>
+              <span>Frames are processed server-side before streaming.</span>
+            </div>
+            <div class="chip chip-live">
+              Live MJPEG stream
+            </div>
+          </div>
+          <div class="video-container">
+            <!-- MJPEG stream from Flask -->
+            <img id="video-stream" src="/video_feed" alt="Live crowd feed" />
+          </div>
+        </article>
+
+        <!-- Right: metrics & events -->
+        <aside class="card">
+          <div class="card-header">
+            <div>
+              <h3>
+                <i class="fa-solid fa-gauge"></i>
+                Density metrics
+              </h3>
+              <span>Updated every second via REST.</span>
+            </div>
+            <div class="chip">
+              <i class="fa-regular fa-clock"></i>
+              <span id="last-update">Last update: --</span>
+            </div>
+          </div>
+
+          <div class="metrics">
+            <div class="metric-row">
+              <span class="metric-label">Approx people in ROI</span>
+              <span class="metric-value" id="metric-count">0</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">Density level</span>
+              <span class="metric-value" id="metric-level">Low</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">Occupancy %</span>
+              <span class="metric-value" id="metric-occ">0%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="progress-fill"></div>
+            </div>
+          </div>
+
+          <div style="margin-top: 6px; font-size: 11px; color: #9ca3af;">
+            Alert logic example: trigger warning above 80% occupancy; use this to send SMS/app notifications.
+          </div>
+
+          <div class="events" id="events">
+            <!-- Sample initial event -->
+            <div class="event">
+              <div>
+                <div>System initialized · waiting for stable frames.</div>
+                <span class="meta">Bootstrap event · no alerts yet.</span>
+              </div>
+              <div class="event-tag">Info</div>
+            </div>
+          </div>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Poll metrics every second
+    async function fetchMetrics() {
+      try {
+        const res = await fetch("/api/metrics");
+        const data = await res.json();
+
+        document.getElementById("metric-count").textContent = data.count;
+        document.getElementById("metric-level").textContent = data.density_level;
+        document.getElementById("metric-occ").textContent = data.occupancy_pct + "%";
+
+        const fill = document.getElementById("progress-fill");
+        fill.style.width = data.occupancy_pct + "%";
+
+        const now = new Date();
+        document.getElementById("last-update").textContent =
+          "Last update: " +
+          now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+
+        maybeAddEvent(data);
+      } catch (err) {
+        console.error("Error fetching metrics", err);
+      }
+    }
+
+    function maybeAddEvent(metrics) {
+      const eventsEl = document.getElementById("events");
+      if (!eventsEl) return;
+
+      // simple example: when occupancy >= 80, add critical event
+      if (metrics.occupancy_pct >= 80) {
+        const div = document.createElement("div");
+        div.className = "event";
+        div.innerHTML = `
+          <div>
+            <div>High density detected (${metrics.count} people, ${metrics.occupancy_pct}%).</div>
+            <span class="meta">Recommended: open alternate gates, redirect flow.</span>
+          </div>
+          <div class="event-tag critical">Critical</div>
+        `;
+        eventsEl.prepend(div);
+      }
+    }
+
+    setInterval(fetchMetrics, 1000);
+    fetchMetrics();
+  </script>
+</body>
+</html>
